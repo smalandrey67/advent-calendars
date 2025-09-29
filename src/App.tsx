@@ -1,72 +1,7 @@
-import { useRef, useState, type ChangeEvent } from "react";
-
 import "./App.css";
 import { Form } from "./components/form/form";
 
 function App() {
-  const [phone, setPhone] = useState("");
-  const [error, setError] = useState("");
-
-  const formRef = useRef<HTMLDivElement>(null);
-  const form2Ref = useRef<HTMLDivElement>(null);
-
-  const handleSubmit = async (e: ChangeEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    const phoneRegex = /^\+380\d{9}$/;
-
-    if (!phoneRegex.test(phone)) {
-      setError("некоректний номер телефону у форматі +380XXXXXXXXX");
-      return;
-    }
-
-    const message = `
-      <b>Нове замовлення!</b>
-      <b>Телефон:</b> ${phone}
-    `;
-
-    const url = `https://api.telegram.org/bot${import.meta.env.VITE_TELEGRAM_BOT_TOKEN}/sendMessage`;
-    const payload = {
-      chat_id: import.meta.env.VITE_TELEGRAM_CHAT_ID,
-      text: message,
-      parse_mode: "HTML",
-    };
-
-    try {
-      await fetch(url, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-
-      setError("");
-      setPhone("");
-    } catch (error) {
-      console.error("Ошибка при отправке в Telegram:", error);
-    }
-  };
-
-  const handleFocus = () => {
-    if (phone === "+380") {
-      setPhone("");
-    }
-
-    if (!phone) {
-      setPhone("+380");
-    }
-  };
-
-  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-
-    if (value.startsWith("+380")) {
-      const digits = value.replace(/\D/g, "").slice(3);
-      setPhone("+380" + digits);
-    } else {
-      setPhone("+380");
-    }
-  };
-
   return (
     <>
       <section className="hero">

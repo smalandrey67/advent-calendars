@@ -73,6 +73,8 @@ export const Form = () => {
       <button type="submit" className="submit-button">
         🛒 Замовити
       </button>
+
+      {error}
       <p className="form-note">* Натискаючи кнопку «Замовити», ви погоджуєтеся з умовами обробки персональних даних</p>
     </form>
   );

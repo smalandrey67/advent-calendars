@@ -1,7 +1,24 @@
-import "./App.css";
+import { useRef } from "react";
+import { useTimer } from "./hooks/useTimer";
+
 import { Form } from "./components/form/form";
 
+import "./App.css";
+
 function App() {
+  const form1Ref = useRef<HTMLDivElement>(null);
+  const form2Ref = useRef<HTMLDivElement>(null);
+
+  const timer = useTimer();
+
+  const scrollToForm1 = () => {
+    form1Ref.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  const scrollToForm2 = () => {
+    form2Ref.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
   return (
     <>
       <section className="hero">
@@ -12,37 +29,37 @@ function App() {
             </div>
 
             <div className="hero-image">
-              <img src="/start-screen-image.webp" alt="Harry Potter Advent Calendar" />
+              <img src="/start-screen-image.jpg" alt="Harry Potter Advent Calendar" />
             </div>
 
-            {/* <!-- Цена --> */}
             <div className="price-section">
               <div className="prices">
-                <span className="current-price">1499 грн</span>
-                <span className="old-price">2399 грн</span>
+                <span className="current-price">1699 грн</span>
+                <span className="old-price">2599 грн</span>
               </div>
               <div className="discount-badge">Скидка 32% • Економія 900 грн</div>
             </div>
 
-            {/* <!-- Таймер --> */}
             <div className="timer-section">
-              <button className="cta-button">🛒 Зробити замовлення</button>
+              <button className="cta-button" onClick={scrollToForm1}>
+                🛒 Зробити замовлення
+              </button>
               <h3>⏰ До кінця акції залишилось:</h3>
               <div className="countdown">
                 <div className="time-unit">
-                  <span id="days">7</span>
+                  <span id="days">{timer.days}</span>
                   <small>днів</small>
                 </div>
                 <div className="time-unit">
-                  <span id="hours">23</span>
+                  <span id="hours">{timer.hours}</span>
                   <small>годин</small>
                 </div>
                 <div className="time-unit">
-                  <span id="minutes">59</span>
+                  <span id="minutes">{timer.minutes}</span>
                   <small>хвилин</small>
                 </div>
                 <div className="time-unit">
-                  <span id="seconds">45</span>
+                  <span id="seconds">{timer.seconds}</span>
                   <small>секунд</small>
                 </div>
               </div>
@@ -51,14 +68,13 @@ function App() {
         </div>
       </section>
 
-      {/* <!-- Описание товара --> */}
       <section className="product-description">
         <div className="container">
           <h2>Чарівність кожного дня</h2>
           <p className="section-subtitle">Aдвент-календарі перетворять очікування Нового року на справжню пригоду!</p>
 
-          {/* <!-- Видео --> */}
-          <div className="video-container">
+          {/* VIDEO */}
+          {/* <div className="video-container">
             <div className="video-placeholder">
               <div className="play-button">
                 <svg
@@ -76,9 +92,8 @@ function App() {
               <p>Відео</p>
               <small>Натисніть для перегляду</small>
             </div>
-          </div>
+          </div> */}
 
-          {/* <!-- Особенности --> */}
           <div className="features-grid">
             <div className="feature-card">
               <div className="feature-icon">🎁</div>
@@ -91,56 +106,22 @@ function App() {
               <p>Акуратне пакування та доставка по всій країні</p>
             </div>
           </div>
-
-          {/* <!-- Характеристики --> */}
-          {/* <div className="specifications">
-            <h3>📋 Характеристики</h3>
-            <div className="specs-table">
-              <div className="spec-row">
-                <span>Размер:</span>
-                <span>40 × 30 см</span>
-              </div>
-              <div className="spec-row">
-                <span>Материал:</span>
-                <span>Плотный картон 350 г/м²</span>
-              </div>
-              <div className="spec-row">
-                <span>Печать:</span>
-                <span>Полноцветная офсетная</span>
-              </div>
-              <div className="spec-row">
-                <span>Покрытие:</span>
-                <span>Матовое ламинирование</span>
-              </div>
-              <div className="spec-row">
-                <span>Содержимое:</span>
-                <span>24 кармашка с сюрпризами</span>
-              </div>
-              <div className="spec-row">
-                <span>Возрастная категория:</span>
-                <span>6+</span>
-              </div>
-            </div>
-          </div> */}
         </div>
       </section>
 
-      {/* <!-- Форма заказа #1 --> */}
-      <section className="order-form" id="order-form">
+      <section className="order-form" id="order-form" ref={form1Ref}>
         <div className="container">
           <h2>Оформити замовлення</h2>
           <Form />
         </div>
       </section>
 
-      {/* <!-- О компании --> */}
       <section className="about-company">
         <div className="container">
           <h2>Про нашу компанію</h2>
           <p className="section-subtitle">Ми спеціалізуємося на створенні чарівних моментів для дітей і дорослих.</p>
 
           <div className="company-content">
-            {/* <!-- Достижения --> */}
             <div className="achievements">
               <h3>Чому обирають нас</h3>
               <div className="stats-grid">
@@ -164,7 +145,6 @@ function App() {
             </div>
           </div>
 
-          {/* <!-- Способы оплаты --> */}
           <div className="payment-methods">
             <div className="delivery-info">
               <div className="payment-card">
@@ -174,7 +154,7 @@ function App() {
                     <strong>Накладений платіж:</strong> оплата під час отримання товару
                   </li>
                   <li>
-                    <strong>Оплата на ФОП:</strong> прямий платіж на рахунок підприємця
+                    <strong>Повна оплата:</strong> проводиться під час доставки
                   </li>
                   <li>
                     <strong>100% гарантія</strong> повернення коштів протягом 30 днів
@@ -182,38 +162,24 @@ function App() {
                 </ul>
               </div>
             </div>
-            {/* <div className="payment-grid">
-              <div className="payment-method">
-                <div className="payment-icon">💳</div>
-                <span>Банковская карта</span>
-              </div>
-              <div className="payment-method">
-                <div className="payment-icon">💵</div>
-                <span>Наличными курьеру</span>
-              </div>
-              <div className="payment-method">
-                <div className="payment-icon">🏦</div>
-                <span>Банковский перевод</span>
-              </div>
-            </div> */}
           </div>
 
-          {/* <!-- Блок с ценой --> */}
           <div className="price-block">
             <div className="price-content">
               <div className="price-title">Акційна ціна</div>
               <div className="price-values">
-                <span className="current-price">1499 грн</span>
-                <span className="old-price">2399 грн</span>
+                <span className="current-price">1699 грн</span>
+                <span className="old-price">2599 грн</span>
               </div>
               <div className="discount-info">Знижка 32% • Економія 900 грн</div>
-              <button className="order-now-btn">🛒 Замовити зараз</button>
+              <button className="order-now-btn" onClick={scrollToForm2}>
+                🛒 Замовити зараз
+              </button>
             </div>
           </div>
         </div>
       </section>
 
-      {/* <!-- Как оформить заказ --> */}
       <section className="how-to-order">
         <div className="container">
           <h2>Як оформити замовлення?</h2>
@@ -242,22 +208,19 @@ function App() {
         </div>
       </section>
 
-      {/* <!-- Форма заказа #2 --> */}
-      <section className="order-form" id="order-form-2">
+      <section className="order-form" id="order-form-2" ref={form2Ref}>
         <div className="container">
           <h2>Оформити замовлення</h2>
           <Form />
         </div>
       </section>
 
-      {/* <!-- Контакты --> */}
       <section className="contacts">
         <div className="container">
-          <h2>📞 Контакты</h2>
+          <h2>📞 Контакти</h2>
           <p className="section-subtitle">Зв’яжіться з нами у будь-який зручний для вас спосіб — ми завжди раді допомогти!</p>
 
           <div className="contacts-content">
-            {/* <!-- Контактная информация --> */}
             <div className="contact-info">
               <h3>💬 Як з нами зв'язатися</h3>
               <div className="contact-item">
@@ -272,7 +235,6 @@ function App() {
               <div className="contact-item">
                 <div className="contact-icon">📧</div>
                 <div>
-                  <h4>Email</h4>
                   <a href="mailto:info@adventcalendars.ru" className="contact-value">
                     advcalendars@support.com
                   </a>
@@ -282,50 +244,11 @@ function App() {
               <div className="contact-item">
                 <div className="contact-icon">🕒</div>
                 <div>
-                  <h4>Графік работи</h4>
                   <span className="contact-value">9:00 - 22:00</span>
                   <p>Щодня, без вихідних</p>
                 </div>
               </div>
             </div>
-
-            {/* <!-- Реквизиты --> */}
-            {/* <div className="company-details">
-              <h3>🏢 Реквизиты компании</h3>
-              <div className="detail-item">
-                <span className="detail-label">Наименование:</span>
-                <span className="detail-value">ИП Иванов Иван Иванович</span>
-              </div>
-              <div className="detail-item">
-                <span className="detail-label">ИНН:</span>
-                <span className="detail-value">123456789012</span>
-              </div>
-              <div className="detail-item">
-                <span className="detail-label">ОГРНИП:</span>
-                <span className="detail-value">123456789012345</span>
-              </div>
-              <div className="detail-item">
-                <span className="detail-label">Юридический адрес:</span>
-                <span className="detail-value">123456, г. Москва, ул. Примерная, д. 123, кв. 45</span>
-              </div>
-
-              <div className="additional-info">
-                <h4>📝 Дополнительная информация</h4>
-                <ul>
-                  <li>Регистрация в налоговой: 01.01.2020</li>
-                  <li>Основной вид деятельности: розничная торговля</li>
-                  <li>Все товары сертифицированы и соответствуют ГОСТ</li>
-                </ul>
-              </div>
-
-              <div className="call-to-action">
-                <h4>🎯 Готовы заказать?</h4>
-                <p>Позвоните нам прямо сейчас!</p>
-                <a href="tel:+78001234567" className="phone-button">
-                  📞 +7 (800) 123-45-67
-                </a>
-              </div>
-            </div> */}
           </div>
         </div>
       </section>

@@ -19,6 +19,8 @@ export const Form = () => {
   const handleSubmit = async (e: ChangeEvent<HTMLFormElement>) => {
     e.preventDefault();
 
+    return;
+
     const phoneRegex = /^\+380\d{9}$/;
 
     if (!phoneRegex.test(phone)) {

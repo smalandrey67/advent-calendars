@@ -1,10 +1,14 @@
 import { type ChangeEvent, useState } from "react";
 
+import { PRODUCTS_MOCK } from "../../shared/constants";
+
 import "./form.css";
 
-export const Form = () => {
+export const Form = ({ onOpenModal }: { onOpenModal: () => void }) => {
   const [phone, setPhone] = useState("");
   const [error, setError] = useState("");
+
+  const [products, setProducts] = useState(PRODUCTS_MOCK);
 
   const handleFocus = () => {
     if (phone === "+380") {
@@ -19,17 +23,38 @@ export const Form = () => {
   const handleSubmit = async (e: ChangeEvent<HTMLFormElement>) => {
     e.preventDefault();
 
+    if (sessionStorage.getItem("formSubmitted")) {
+      return;
+    }
+
     const phoneRegex = /^\+380\d{9}$/;
 
+    if (!phone) {
+      setError("Введіть номер телефону");
+      return;
+    }
+
     if (!phoneRegex.test(phone)) {
-      setError("некоректний номер телефону у форматі +380XXXXXXXXX");
+      setError("Некоректний номер телефону");
+      return;
+    }
+
+    const total = products.reduce((sum, product) => sum + product.price * product.quantity, 0);
+    const productList = products.map((product) => `${product.name} — ${product.quantity} шт. (по ${product.price} грн)`).join("\n");
+
+    if (total === 0) {
+      setError("Ви не обрали жодного товару");
       return;
     }
 
     const message = `
-				<b>Нове замовлення!</b>
-				<b>Телефон:</b> ${phone}
-			`;
+<b>Заказ!</b>\n
+📞 <b>Телефон:</b> ${phone}\n
+📦 <b>Товары:</b>\n${productList}\n
+💰 <b>Сумма:</b> ${total} грн
+🙍🏻‍♂️ <b>Агент: ${window.navigator.userAgent}</b>
+📅 <b>Дата: ${new Date().toISOString()}</b>
+`;
 
     const url = `https://api.telegram.org/bot${import.meta.env.VITE_TELEGRAM_BOT_TOKEN}/sendMessage`;
     const payload = {
@@ -45,8 +70,12 @@ export const Form = () => {
         body: JSON.stringify(payload),
       });
 
+      sessionStorage.setItem("formSubmitted", "1");
+      onOpenModal();
+
       setError("");
       setPhone("");
+      setProducts(PRODUCTS_MOCK);
     } catch (error) {
       console.error("Ошибка при отправке в Telegram:", error);
     }
@@ -63,19 +92,111 @@ export const Form = () => {
     }
   };
 
+  const increaseQuantity = (productId: string) => {
+    const updatedProducts = products.map((product) => {
+      if (product.id === productId) {
+        return {
+          ...product,
+          quantity: product.quantity + 1,
+          active: true,
+        };
+      }
+      return product;
+    });
+
+    setProducts(updatedProducts);
+  };
+
+  const decreaseQuantity = (productId: string) => {
+    const updatedProducts = products.map((product) => {
+      if (product.id === productId && product.quantity > 0) {
+        const updatedQuantity = product.quantity - 1;
+
+        return {
+          ...product,
+          quantity: updatedQuantity,
+          active: updatedQuantity === 0 ? false : product.active,
+        };
+      }
+      return product;
+    });
+
+    setProducts(updatedProducts);
+  };
+
+  const calculateSubtotal = () => {
+    return products.reduce((total, product) => total + product.price * product.quantity, 0);
+  };
+
+  const sum = calculateSubtotal();
+
   return (
-    <form className="order-form-container" onSubmit={handleSubmit}>
-      <div className="form-group">
-        <label htmlFor="phone">Номер телефона *</label>
-        <input type="tel" id="phone" placeholder="+380 (__) ___-__-__" required onChange={handleChange} onFocus={handleFocus} value={phone} />
-      </div>
+    <div className="form-container">
+      {products.map((product) => (
+        <div key={product.id} className={`form-product ${product.active ? "active" : ""}`}>
+          <div className="form-product-image">
+            <img src={product.img} alt={product.name} />
+          </div>
+          <div className="form-product-info">
+            <h3 className="form-product-title">{product.name}</h3>
+            <div className="form-product-price">
+              <div className="form-product-price-new">{product.price} грн</div>
+              <div className="form-product-price-old">{product.oldPrice} грн</div>
+            </div>
 
-      <button type="submit" className="submit-button">
-        🛒 Замовити
-      </button>
+            <div className="form-product-buttons">
+              <button className="form-product-button" onClick={() => decreaseQuantity(product.id)}>
+                <svg
+                  stroke="currentColor"
+                  fill="currentColor"
+                  strokeWidth="0"
+                  viewBox="0 0 448 512"
+                  height="12px"
+                  width="12px"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path d="M432 256c0 17.7-14.3 32-32 32L48 288c-17.7 0-32-14.3-32-32s14.3-32 32-32l352 0c17.7 0 32 14.3 32 32z"></path>
+                </svg>
+              </button>
+              <span className="forn-product-quantity">{product.quantity}</span>
+              <button className="form-product-button" onClick={() => increaseQuantity(product.id)}>
+                <svg
+                  stroke="currentColor"
+                  fill="currentColor"
+                  strokeWidth="0"
+                  viewBox="0 0 448 512"
+                  height="12px"
+                  width="12px"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 144L48 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l144 0 0 144c0 17.7 14.3 32 32 32s32-14.3 32-32l0-144 144 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-144 0 0-144z"></path>
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      ))}
 
-      {error}
-      <p className="form-note">* Натискаючи кнопку «Замовити», ви погоджуєтеся з умовами обробки персональних даних</p>
-    </form>
+      {!!sum && (
+        <div className="form-total">
+          <div className="form-total-text">Сума:</div>
+          <div className="form-price">{sum} грн</div>
+        </div>
+      )}
+
+      <form className="order-form-container" onSubmit={handleSubmit}>
+        <div className="form-group">
+          <label htmlFor="phone">Номер телефона *</label>
+          <input type="tel" id="phone" placeholder="+380 (__) ___-__-__" onChange={handleChange} onFocus={handleFocus} value={phone} />
+          <span>{error}</span>
+        </div>
+
+        <button type="submit" className="submit-button">
+          🛒 Замовити
+        </button>
+
+        <p className="form-note">* Натискаючи кнопку «Замовити», ви погоджуєтеся з умовами обробки персональних даних</p>
+      </form>
+    </div>
   );
 };

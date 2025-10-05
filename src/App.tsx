@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { useTimer } from "./hooks/useTimer";
 
 import { Form } from "./components/form/form";
@@ -6,6 +6,8 @@ import { Form } from "./components/form/form";
 import "./App.css";
 
 function App() {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   const form1Ref = useRef<HTMLDivElement>(null);
   const form2Ref = useRef<HTMLDivElement>(null);
 
@@ -17,6 +19,16 @@ function App() {
 
   const scrollToForm2 = () => {
     form2Ref.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    document.body.style.overflow = "auto";
+  };
+
+  const openModal = () => {
+    setIsModalOpen(true);
+    document.body.style.overflow = "hidden";
   };
 
   return (
@@ -37,7 +49,7 @@ function App() {
                 <span className="current-price">1699 грн</span>
                 <span className="old-price">2599 грн</span>
               </div>
-              <div className="discount-badge">Скидка 32% • Економія 900 грн</div>
+              <div className="discount-badge">Скидка 34% • Економія 900 грн</div>
             </div>
 
             <div className="timer-section">
@@ -109,10 +121,10 @@ function App() {
         </div>
       </section>
 
-      <section className="order-form" id="order-form" ref={form1Ref}>
+      <section className="order-form" id="order-form">
         <div className="container">
-          <h2>Оформити замовлення</h2>
-          <Form />
+          <h2 ref={form1Ref}>Оформити замовлення</h2>
+          <Form onOpenModal={openModal} />
         </div>
       </section>
 
@@ -134,8 +146,8 @@ function App() {
                   <span className="stat-label">Задоволених клієнтів</span>
                 </div>
                 <div className="stat">
-                  <span className="stat-number">50+</span>
-                  <span className="stat-label">Міст доставки</span>
+                  <span className="stat-number">20+</span>
+                  <span className="stat-label">Партнерів по всьому світі</span>
                 </div>
                 <div className="stat">
                   <span className="stat-number">99%</span>
@@ -171,7 +183,7 @@ function App() {
                 <span className="current-price">1699 грн</span>
                 <span className="old-price">2599 грн</span>
               </div>
-              <div className="discount-info">Знижка 32% • Економія 900 грн</div>
+              <div className="discount-info">Знижка 34% • Економія 900 грн</div>
               <button className="order-now-btn" onClick={scrollToForm2}>
                 🛒 Замовити зараз
               </button>
@@ -208,10 +220,10 @@ function App() {
         </div>
       </section>
 
-      <section className="order-form" id="order-form-2" ref={form2Ref}>
+      <section className="order-form" id="order-form-2">
         <div className="container">
-          <h2>Оформити замовлення</h2>
-          <Form />
+          <h2 ref={form2Ref}>Оформити замовлення</h2>
+          <Form onOpenModal={openModal} />
         </div>
       </section>
 
@@ -241,17 +253,35 @@ function App() {
                   <p>Для питань та пропозицій</p>
                 </div>
               </div>
-              <div className="contact-item">
-                <div className="contact-icon">🕒</div>
-                <div>
-                  <span className="contact-value">9:00 - 22:00</span>
-                  <p>Щодня, без вихідних</p>
-                </div>
-              </div>
             </div>
           </div>
+
+          <div className="contacts-footer">Графік роботи: Понеділок - Неділя, 9:00 - 22:00 ФОП Прокопчук Павел Васильович</div>
         </div>
       </section>
+
+      {isModalOpen && (
+        <div id="successModal" className="modal" onClick={closeModal}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <button className="close" onClick={closeModal} aria-label="close modal">
+              <svg
+                stroke="currentColor"
+                fill="currentColor"
+                strokeWidth="0"
+                viewBox="0 0 512 512"
+                height="15px"
+                width="15px"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path fill="none" stroke-linecap="round" strokeLinejoin="round" strokeWidth="32" d="M368 368 144 144m224 0L144 368"></path>
+              </svg>
+            </button>
+            <div className="modal-icon">🎉</div>
+            <h3 className="modal-title">Замовлення прийнято!</h3>
+            <p className="modal-text">Наш менеджер зв'яжеться з вами протягом 15 хвилин</p>
+          </div>
+        </div>
+      )}
     </>
   );
 }

@@ -1,10 +1,10 @@
-.order-form-container {
-  max-width: 600px;
-  margin: 0 auto;
+.form-container {
   background: var(--gradient-hero);
-  padding: 2.5rem 2rem;
+  padding: 2.5rem 1.5rem;
   border-radius: var(--radius);
   color: #ffffff;
+  max-width: 600px;
+  margin: 0 auto;
 }
 
 .form-group {
@@ -16,6 +16,11 @@
   font-weight: 600;
   margin-bottom: var(--spacing-xs);
   font-size: 1rem;
+}
+
+.form-group span {
+  color: #ffffff;
+  font-weight: bold;
 }
 
 .form-group input[type="tel"] {
@@ -31,4 +36,77 @@
   outline: none;
   border-color: var(--color-primary);
   box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+}
+
+.form-product {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 15px;
+  align-items: flex-start;
+  margin-bottom: 0.5rem;
+  padding: 10px;
+}
+
+.form-product.active {
+  background: var(--gradient-accent);
+  border-radius: 12px;
+}
+
+.form-product-image img {
+  width: 100%;
+  border-radius: 5px;
+}
+
+.form-product-title {
+  font-size: 1rem;
+  margin-bottom: 0.4rem;
+}
+
+.form-product-price {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-bottom: 0.7rem;
+}
+
+.form-product-price-new {
+  font-size: 1.2rem;
+}
+
+.form-product-price-old {
+  text-decoration: line-through;
+  font-size: 1rem;
+  opacity: 0.7;
+}
+
+.form-product-buttons {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.form-product-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: none;
+
+  background: #ffffff;
+
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+
+  color: var(--color-brown);
+}
+
+.form-total {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-bottom: 1rem;
+  font-size: 1.5rem;
+  font-weight: bold;
 }

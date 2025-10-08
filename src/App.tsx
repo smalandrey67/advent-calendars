@@ -11,6 +11,9 @@ function App() {
   const form1Ref = useRef<HTMLDivElement>(null);
   const form2Ref = useRef<HTMLDivElement>(null);
 
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+
   const timer = useTimer();
 
   const scrollToForm1 = () => {
@@ -29,6 +32,31 @@ function App() {
   const openModal = () => {
     setIsModalOpen(true);
     document.body.style.overflow = "hidden";
+  };
+
+  const handlePlay = () => {
+    setIsPlaying(true);
+
+    setTimeout(() => {
+      if (!videoRef.current) return;
+
+      if (videoRef.current.requestFullscreen) {
+        videoRef.current.requestFullscreen();
+      }
+      videoRef.current.play();
+    }, 150);
+  };
+
+  const handlePause = () => {
+    setIsPlaying(false);
+
+    if (document.fullscreenElement) {
+      document.exitFullscreen();
+    }
+
+    if (videoRef.current) {
+      videoRef.current.pause();
+    }
   };
 
   return (
@@ -85,26 +113,25 @@ function App() {
           <h2>Чарівність кожного дня</h2>
           <p className="section-subtitle">Aдвент-календарі перетворять очікування Нового року на справжню пригоду!</p>
 
-          {/* VIDEO */}
-          {/* <div className="video-container">
-            <div className="video-placeholder">
-              <div className="play-button">
-                <svg
-                  stroke="currentColor"
-                  fill="currentColor"
-                  stroke-width="0"
-                  viewBox="0 0 448 512"
-                  height="13px"
-                  width="13px"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path d="M424.4 214.7L72.4 6.6C43.8-10.3 0 6.1 0 47.9V464c0 37.5 40.7 60.1 72.4 41.3l352-208c31.4-18.5 31.5-64.1 0-82.6z"></path>
-                </svg>
+          <div className="video-container">
+            {!isPlaying && (
+              <div className="video-placeholder" onClick={handlePlay}>
+                <div className="play-button">
+                  <svg stroke="currentColor" fill="currentColor" viewBox="0 0 448 512" height="15px" width="15px" xmlns="http://www.w3.org/2000/svg">
+                    <path
+                      d="M424.4 214.7L72.4 6.6C43.8-10.3 0 
+                6.1 0 47.9V464c0 37.5 40.7 60.1 
+                72.4 41.3l352-208c31.4-18.5 
+                31.5-64.1 0-82.6z"
+                    ></path>
+                  </svg>
+                </div>
+                <small>Натисніть для перегляду</small>
               </div>
-              <p>Відео</p>
-              <small>Натисніть для перегляду</small>
-            </div>
-          </div> */}
+            )}
+
+            <video ref={videoRef} src="/video.mp4" playsInline controls onPause={handlePause} className={isPlaying ? "fullscreen" : ""} />
+          </div>
 
           <div className="features-grid">
             <div className="feature-card">
@@ -230,7 +257,7 @@ function App() {
       <section className="contacts">
         <div className="container">
           <h2>📞 Контакти</h2>
-          <p className="section-subtitle">Зв’яжіться з нами у будь-який зручний для вас спосіб — ми завжди раді допомогти!</p>
+          <p className="section-subtitle">Зв’яжіться з нами у будь-який зручний для вас спосіб - ми завжди раді допомогти!</p>
 
           <div className="contacts-content">
             <div className="contact-info">

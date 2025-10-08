@@ -308,32 +308,83 @@ section h2 {
 
 /* Видео */
 .video-container {
-  max-width: 800px;
-  margin: 0 auto var(--spacing-2xl);
+  position: relative;
+  width: 100%;
+  max-width: 500px;
+  margin: 0 auto;
 }
 
+/* Превью блока */
 .video-placeholder {
-  aspect-ratio: 16/9;
-  border-radius: 5px;
+  position: relative;
+  aspect-ratio: 16 / 9;
+  background: url("/start-screen-image.jpg") center/cover no-repeat;
+  border-radius: 16px;
+  cursor: pointer;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
-  align-items: center;
   justify-content: center;
-  cursor: pointer;
-  box-shadow: var(--shadow-card);
+  align-items: center;
+  color: white;
+  text-align: center;
+  transition: transform 0.3s ease;
 }
 
+.video-placeholder::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 0;
+}
+
+/* Текст поверх */
+.video-placeholder p,
+.video-placeholder small {
+  position: relative;
+  z-index: 2;
+  margin: 4px 0;
+}
+
+.video-placeholder p {
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+/* Кнопка воспроизведения */
 .play-button {
-  width: 50px;
-  height: 50px;
-  background: var(--color-red);
+  position: relative;
+  z-index: 2;
+  background: #f97316;
+  color: #ffffff;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: white;
-  font-size: 2rem;
-  margin-bottom: 0.5rem;
+  transition: transform 0.2s ease;
+  width: 45px;
+  height: 45px;
+}
+
+/* Видео по умолчанию скрыто */
+.video-container video {
+  display: none;
+  width: 100%;
+  border-radius: 16px;
+}
+
+/* Фуллскрин стиль (при активации) */
+.video-container video.fullscreen {
+  display: block;
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  background: black;
+  z-index: 1000;
+  border-radius: 0;
 }
 
 /* Сетки */

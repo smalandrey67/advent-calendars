@@ -1,5 +1,7 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTimer } from "./hooks/useTimer";
+
+import ReactPlayer from "react-player";
 
 import { Form } from "./components/form/form";
 
@@ -12,7 +14,7 @@ function App() {
   const form2Ref = useRef<HTMLDivElement>(null);
 
   const videoRef = useRef<HTMLVideoElement>(null);
-  const [isPlaying, setIsPlaying] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(true);
 
   const timer = useTimer();
 
@@ -114,6 +116,23 @@ function App() {
           <p className="section-subtitle">Aдвент-календарі перетворять очікування Нового року на справжню пригоду!</p>
 
           <div className="video-container">
+            <ReactPlayer
+              src="/video.mp4"
+              light={"/start-screen-image.jpg"}
+              playing={isPlaying}
+              controls
+              height={200}
+              width={"100%"}
+              ref={videoRef}
+              onStart={() => videoRef.current?.requestFullscreen()}
+              onPause={() => {
+                setIsPlaying((prev) => !prev);
+              }}
+            />
+          </div>
+
+          {/* 
+          <div className="video-container">
             {!isPlaying && (
               <div className="video-placeholder" onClick={handlePlay}>
                 <div className="play-button">
@@ -131,7 +150,7 @@ function App() {
             )}
 
             <video ref={videoRef} src="/video.mp4" playsInline controls onPause={handlePause} className={isPlaying ? "fullscreen" : ""} />
-          </div>
+          </div> */}
 
           <div className="features-grid">
             <div className="feature-card">

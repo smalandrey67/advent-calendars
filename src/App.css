@@ -314,6 +314,11 @@ section h2 {
   margin: 0 auto;
 }
 
+.react-player__preview {
+  height: 200px !important;
+  border-radius: 16px;
+}
+
 /* Превью блока */
 .video-placeholder {
   position: relative;

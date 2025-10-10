@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { useTimer } from "./hooks/useTimer";
 
 import ReactPlayer from "react-player";
@@ -34,31 +34,6 @@ function App() {
   const openModal = () => {
     setIsModalOpen(true);
     document.body.style.overflow = "hidden";
-  };
-
-  const handlePlay = () => {
-    setIsPlaying(true);
-
-    setTimeout(() => {
-      if (!videoRef.current) return;
-
-      if (videoRef.current.requestFullscreen) {
-        videoRef.current.requestFullscreen();
-      }
-      videoRef.current.play();
-    }, 150);
-  };
-
-  const handlePause = () => {
-    setIsPlaying(false);
-
-    if (document.fullscreenElement) {
-      document.exitFullscreen();
-    }
-
-    if (videoRef.current) {
-      videoRef.current.pause();
-    }
   };
 
   return (

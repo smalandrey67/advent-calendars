@@ -317,6 +317,7 @@ section h2 {
 .react-player__preview {
   height: 200px !important;
   border-radius: 16px;
+  margin-bottom: 1rem;
 }
 
 /* Превью блока */

@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { useTimer } from "./hooks/useTimer";
 
 import ReactPlayer from "react-player";
@@ -31,10 +31,10 @@ function App() {
     document.body.style.overflow = "auto";
   };
 
-  const openModal = () => {
+  const openModal = useCallback(() => {
     setIsModalOpen(true);
     document.body.style.overflow = "hidden";
-  };
+  }, []);
 
   return (
     <>

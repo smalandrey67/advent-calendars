@@ -1,12 +1,20 @@
-import { type ChangeEvent, useState } from "react";
+import { type ChangeEvent, memo, useState } from "react";
 
 import { PRODUCTS_MOCK } from "../../shared/constants";
 
 import "./form.css";
 
-export const Form = ({ onOpenModal }: { onOpenModal: () => void }) => {
+export const Form = memo(({ onOpenModal }: { onOpenModal: () => void }) => {
   const [phone, setPhone] = useState("");
-  const [error, setError] = useState("");
+  const [name, setName] = useState("");
+  const [address, setAddress] = useState("");
+
+  const [error, setError] = useState({
+    phone: "",
+    name: "",
+    address: "",
+    products: "",
+  });
 
   const [products, setProducts] = useState(PRODUCTS_MOCK);
 
@@ -23,33 +31,35 @@ export const Form = ({ onOpenModal }: { onOpenModal: () => void }) => {
   const handleSubmit = async (e: ChangeEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if (sessionStorage.getItem("formSubmitted")) {
+    // if (sessionStorage.getItem("formSubmitted")) {
+    //   return;
+    // }
+
+    const total = products.reduce((sum, product) => sum + product.price * product.quantity, 0);
+    const productList = products.map((product) => `${product.name} — ${product.quantity} шт. (по ${product.price} грн)`).join("\n");
+
+    if (total === 0) {
+      setError({ ...error, products: "!! Ви не обрали жодного товару" });
       return;
     }
 
     const phoneRegex = /^\+380\d{9}$/;
 
     if (!phone) {
-      setError("Введіть номер телефону");
+      setError({ ...error, phone: "Введіть номер телефону" });
       return;
     }
 
     if (!phoneRegex.test(phone)) {
-      setError("Некоректний номер телефону");
-      return;
-    }
-
-    const total = products.reduce((sum, product) => sum + product.price * product.quantity, 0);
-    const productList = products.map((product) => `${product.name} — ${product.quantity} шт. (по ${product.price} грн)`).join("\n");
-
-    if (total === 0) {
-      setError("Ви не обрали жодного товару");
+      setError({ ...error, phone: "Некоректний номер телефону" });
       return;
     }
 
     const message = `
 <b>Заказ!</b>\n
 📞 <b>Телефон:</b> ${phone}\n
+📦 <b>Имя и фамилия:</b> ${name || "не указали"}\n
+💰 <b>Адрес:</b> ${address || "не указали"}
 📦 <b>Товары:</b>\n${productList}\n
 💰 <b>Сумма:</b> ${total} грн
 🙍🏻‍♂️ <b>Агент: ${window.navigator.userAgent}</b>
@@ -73,8 +83,10 @@ export const Form = ({ onOpenModal }: { onOpenModal: () => void }) => {
       sessionStorage.setItem("formSubmitted", "1");
       onOpenModal();
 
-      setError("");
+      setError({ phone: "", name: "", address: "", products: "" });
       setPhone("");
+      setName("");
+      setAddress("");
       setProducts(PRODUCTS_MOCK);
     } catch (error) {
       console.error("Ошибка при отправке в Telegram:", error);
@@ -104,6 +116,7 @@ export const Form = ({ onOpenModal }: { onOpenModal: () => void }) => {
       return product;
     });
 
+    setError({ ...error, products: "" });
     setProducts(updatedProducts);
   };
 
@@ -132,71 +145,85 @@ export const Form = ({ onOpenModal }: { onOpenModal: () => void }) => {
 
   return (
     <div className="form-container">
-      {products.map((product) => (
-        <div key={product.id} className={`form-product ${product.active ? "active" : ""}`}>
-          <div className="form-product-image">
-            <img src={product.img} alt={product.name} />
-          </div>
-          <div className="form-product-info">
-            <h3 className="form-product-title">{product.name}</h3>
-            <div className="form-product-price">
-              <div className="form-product-price-new">{product.price} грн</div>
-              <div className="form-product-price-old">{product.oldPrice} грн</div>
+      <div className="form-products">
+        {products.map((product) => (
+          <div key={product.id} className={`form-product ${product.active ? "active" : ""}`}>
+            <div className="form-product-image">
+              <img src={product.img} alt={product.name} />
             </div>
+            <div className="form-product-info">
+              <h3 className="form-product-title">{product.name}</h3>
+              <div className="form-product-price">
+                <div className="form-product-price-new">{product.price} грн</div>
+                <div className="form-product-price-old">{product.oldPrice} грн</div>
+              </div>
 
-            <div className="form-product-buttons">
-              <button className="form-product-button" onClick={() => decreaseQuantity(product.id)}>
-                <svg
-                  stroke="currentColor"
-                  fill="currentColor"
-                  strokeWidth="0"
-                  viewBox="0 0 448 512"
-                  height="12px"
-                  width="12px"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path d="M432 256c0 17.7-14.3 32-32 32L48 288c-17.7 0-32-14.3-32-32s14.3-32 32-32l352 0c17.7 0 32 14.3 32 32z"></path>
-                </svg>
-              </button>
-              <span className="forn-product-quantity">{product.quantity}</span>
-              <button className="form-product-button" onClick={() => increaseQuantity(product.id)}>
-                <svg
-                  stroke="currentColor"
-                  fill="currentColor"
-                  strokeWidth="0"
-                  viewBox="0 0 448 512"
-                  height="12px"
-                  width="12px"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 144L48 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l144 0 0 144c0 17.7 14.3 32 32 32s32-14.3 32-32l0-144 144 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-144 0 0-144z"></path>
-                </svg>
-              </button>
+              <div className="form-product-buttons">
+                <button className="form-product-button" onClick={() => decreaseQuantity(product.id)}>
+                  <svg
+                    stroke="currentColor"
+                    fill="currentColor"
+                    strokeWidth="0"
+                    viewBox="0 0 448 512"
+                    height="12px"
+                    width="12px"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path d="M432 256c0 17.7-14.3 32-32 32L48 288c-17.7 0-32-14.3-32-32s14.3-32 32-32l352 0c17.7 0 32 14.3 32 32z"></path>
+                  </svg>
+                </button>
+                <span className="forn-product-quantity">{product.quantity}</span>
+                <button className="form-product-button" onClick={() => increaseQuantity(product.id)}>
+                  <svg
+                    stroke="currentColor"
+                    fill="currentColor"
+                    strokeWidth="0"
+                    viewBox="0 0 448 512"
+                    height="12px"
+                    width="12px"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 144L48 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l144 0 0 144c0 17.7 14.3 32 32 32s32-14.3 32-32l0-144 144 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-144 0 0-144z"></path>
+                  </svg>
+                </button>
+              </div>
             </div>
           </div>
-        </div>
-      ))}
+        ))}
 
-      {!!sum && (
-        <div className="form-total">
-          <div className="form-total-text">Сума:</div>
-          <div className="form-price">{sum} грн</div>
-        </div>
-      )}
+        {error.products && <span className="form-products-error">{error.products}</span>}
+      </div>
 
       <form className="order-form-container" onSubmit={handleSubmit}>
         <div className="form-group">
           <label htmlFor="phone">Номер телефона *</label>
           <input type="tel" id="phone" placeholder="+380 (__) ___-__-__" onChange={handleChange} onFocus={handleFocus} value={phone} />
-          <span>{error}</span>
+          <span>{error.phone}</span>
         </div>
+
+        <div className="form-group">
+          <label htmlFor="name">Ім'я та прізвище</label>
+          <input type="tel" id="name" placeholder="Іван Прокопенко" onChange={(e) => setName(e.target.value)} value={name} />
+          <span>{error.name}</span>
+        </div>
+
+        <div className="form-group">
+          <label htmlFor="address">Відділення нової пошти</label>
+          <input type="tel" id="address" placeholder="Київ, відділення №123" onChange={(e) => setAddress(e.target.value)} value={address} />
+          <span>{error.address}</span>
+        </div>
+
+        {!!sum && (
+          <div className="form-total">
+            <div className="form-total-text">Сума:</div>
+            <div className="form-price">{sum} грн</div>
+          </div>
+        )}
 
         <button type="submit" className="submit-button">
           🛒 Замовити
         </button>
-
-        <p className="form-note">* Натискаючи кнопку «Замовити», ви погоджуєтеся з умовами обробки персональних даних</p>
       </form>
     </div>
   );
-};
+});

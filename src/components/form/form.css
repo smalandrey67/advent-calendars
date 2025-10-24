@@ -19,7 +19,7 @@
 }
 
 .form-group span {
-  color: #ffffff;
+  color: #000000;
   font-weight: bold;
 }
 
@@ -38,18 +38,25 @@
   box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
 }
 
+.form-products-error {
+  color: #000000;
+  font-weight: bold;
+  display: inline-block;
+  margin-bottom: 0.5rem;
+}
+
 .form-product {
   display: grid;
   grid-template-columns: 1fr 2fr;
   gap: 15px;
   align-items: flex-start;
-  margin-bottom: 0.5rem;
-  padding: 10px;
+  margin-bottom: 10px;
 }
 
 .form-product.active {
   background: var(--gradient-accent);
   border-radius: 12px;
+  padding: 10px;
 }
 
 .form-product-image img {
